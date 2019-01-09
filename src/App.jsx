@@ -7,7 +7,7 @@ class App extends Component {
     super(props);
     this.state = {
       loading: true,
-      currentUser: { name: 'Danny', action: false},
+      currentUser: { name: 'Danny', content: ''},
       messages : [{
           username: 'Danny',
           content: 'Where is my phone?'
@@ -22,6 +22,8 @@ class App extends Component {
         }
       ]
     };
+
+    this.getNewMessage = this.getNewMessage.bind(this);
   }
 
   componentDidMount(){
@@ -34,7 +36,13 @@ class App extends Component {
       // Update the state of the app component.
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({messages: messages})
-    }, 3000);
+    }, 1000);
+  }
+
+  getNewMessage(name, content){
+    console.log("ready to get msg")
+      const newMsg = this.state.messages.concat({username: name, content: content});
+      this.setState({messages: newMsg}, 1000);
   }
 
   render() {
@@ -57,7 +65,7 @@ class App extends Component {
             </div>
           </main>
       <footer className="chatbar">
-              <ChatBar theUser={this.state.currentUser}/>
+          <ChatBar getNewMessage={this.getNewMessage}/>
       </footer>
       </div>
     );
