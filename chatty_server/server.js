@@ -48,20 +48,32 @@ wss.on('connection', ws => {
     console.log(`Got message from the client ${data}`);
     const objData = JSON.parse(data);
      console.log("The name here: ", objData.username)
+     let objectToBroadcast = {};
     switch (objData.type) {
-      case 'text-message':
-        const objectToBroadcast = {
+      case 'postMessage':
+        objectToBroadcast = {
           id: uuid(),
           name: objData.username,
           content: objData.content,
-          type: 'text-message'
+          type: 'incomingMessage'
         };
-
         messageDatabase.push(objectToBroadcast);
         wss.broadcastJSON(objectToBroadcast);
         break;
+
+      case 'postNotification':
+        objectToBroadcast = {
+          content: objData.content,
+          type: 'incomingNotification'
+        };
+        messageDatabase.push(objectToBroadcast);
+        wss.broadcastJSON(objectToBroadcast);
+        break;
+
       default:
     }
+
+
   });
 
   const initialMessage = {

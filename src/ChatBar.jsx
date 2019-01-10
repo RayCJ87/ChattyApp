@@ -4,6 +4,11 @@ let newUser = '';
 let newContent = '';
 
 export default class ChatBar extends Component {
+
+  constructor (props){
+    super(props)
+    this.handleEnter = this.handleEnter.bind(this);
+  }
   checkMsg (evt) {
     evt.preventDefault();
     if (evt.target.name === "theName"){
@@ -16,14 +21,17 @@ export default class ChatBar extends Component {
     }
   }
 
-  handleEnter = (evt) => {
+  handleEnter (evt) {
     evt.preventDefault();
+    console.log("The userrr is: ", newUser);
     if (evt.key === "Enter" && newContent != ''){
       if (newUser === ''){
         newUser = 'Anonymous'
       }
-      this.props.updateCurrentUser(newUser);
-      this.props._sendMessageToServer(newUser, newContent);
+      this.props.updateCurrentUser(newUser)
+      .then(res=> {
+          this.props._sendMessageToServer(newUser, newContent)
+      })
       evt.target.value = '';
     }
 

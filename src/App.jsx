@@ -28,11 +28,17 @@ class App extends Component {
       const json = JSON.parse(payload.data);
 
       switch (json.type) {
-        case 'text-message':
+        case 'incomingMessage':
           this.setState({
             messages: [ ...this.state.messages, json]
           });
-          console.log("The messages fofr display:", this.state.messages);
+          console.log("The messages fof display:", this.state.messages);
+          break;
+        case 'incomingNotification':
+          this.setState({
+            messages: [ ...this.state.messages, json]
+          })
+          console.log("The messages of user change:", this.state.messages);
           break;
         case 'initial-messages':
           this.setState({
@@ -62,22 +68,31 @@ class App extends Component {
   // }
 
   updateCurrentUser(name){
-    this.setState({currentUser: {name: name}});
+    const oldUser = this.state.currentUser.name;
+    const that = this;
+
+      let promise1 = new Promise (function(resolve, reject) {
+         if (oldUser != name){
+          that.setState({currentUser: {name: name}});
+          const userChangeNotification = {type: "postNotification", content: `${oldUser} has changed their name tp ${name}`};
+          that.socket.send(JSON.stringify(userChangeNotification));
+          console.log(userChangeNotification);
+          resolve();
+             };
+          resolve();
+      });
+      return promise1;
   }
 
   _sendMessageToServer(name, content) {
-
     console.log("ready to send msg to server.")
-    const newMsgToSend = {type:'text-message', username: name, content: content};
+    const newMsgToSend = {type:'postMessage', username: name, content: content};
     console.log("New msg here", newMsgToSend.username);
     console.log("the obj to send: ", newMsgToSend);
     this.socket.send(JSON.stringify(newMsgToSend));
-
   }
 
-
   render() {
-
     return (
       <div className = 'theContainer'>
       <main className="messages">
