@@ -30,7 +30,7 @@ export default class ChatBar extends Component {
       }
       this.props.updateCurrentUser(newUser)
       .then(res=> {
-          this.props._sendMessageToServer(newUser, newContent)
+          this.props._sendMessageToServer(newUser, newContent, this.props.nameColor)
       })
       evt.target.value = '';
     }

@@ -8,7 +8,8 @@ class App extends Component {
     this.state = {
       loading: true,
       currentUser: {name: ''},
-      messages : []
+      messages : [],
+      currentColor: {}
     };
 
     this._sendMessageToServer = this._sendMessageToServer.bind(this);
@@ -27,10 +28,15 @@ class App extends Component {
       console.log('Got a message from server', payload);
       const json = JSON.parse(payload.data);
 
+      console.log("THe user online now --->", json.users);
+      this.setState({userNumber: json.users});
+
+      console.log("The name color is:", json.nameColor);
       switch (json.type) {
         case 'incomingMessage':
           this.setState({
-            messages: [ ...this.state.messages, json]
+            messages: [ ...this.state.messages, json],
+            currentColor: {nameColor: json.nameColor}
           });
           console.log("The messages fof display:", this.state.messages);
           break;
@@ -44,6 +50,9 @@ class App extends Component {
           this.setState({
             messages: json.messages
           });
+          break;
+        case 'repeatedName':
+          alert('This name is taken, please choose another one');
           break;
         default:
       }
@@ -64,12 +73,14 @@ class App extends Component {
 
   updateCurrentUser(name){
     const oldUser = this.state.currentUser.name;
+    const theColor = this.state.currentColor.nameColor;
     const that = this;
 
       let promise1 = new Promise (function(resolve, reject) {
         let userChangeNotification = {};
          if (oldUser != name ){
-          that.setState({currentUser: {name: name}});
+          that.setState({currentUser: {name: name},
+                          currentColor: {}});
           if (oldUser == ''){
             userChangeNotification = {type: "postNotification", content: `New user:  ***${name}***`};
           }
@@ -85,9 +96,9 @@ class App extends Component {
       return promise1;
   }
 
-  _sendMessageToServer(name, content) {
+  _sendMessageToServer(name, content, color) {
     console.log("ready to send msg to server.")
-    const newMsgToSend = {type:'postMessage', username: name, content: content};
+    const newMsgToSend = {type:'postMessage', username: name, content: content, nameColor: color };
     console.log("New msg here", newMsgToSend.username);
     console.log("the obj to send: ", newMsgToSend);
     this.socket.send(JSON.stringify(newMsgToSend));
@@ -102,14 +113,15 @@ class App extends Component {
       </main>
           <nav className="navbar">
                 <a href="/" className="navbar-brand">Chatty</a>
+                <span className="usersOnline">{this.state.userNumber} users online now</span>
           </nav>
           <main className="messages">
-          <MessageList message={this.state.messages}/>
+          <MessageList message={this.state.messages} nColor={this.state.currentColor.nameColor}/>
             <div className="message system">
             </div>
           </main>
       <footer className="chatbar">
-          <ChatBar _sendMessageToServer={this._sendMessageToServer} updateCurrentUser={this.updateCurrentUser} />
+          <ChatBar _sendMessageToServer={this._sendMessageToServer} updateCurrentUser={this.updateCurrentUser} nameColor= {this.state.currentColor.nameColor}/>
       </footer>
       </div>
     );

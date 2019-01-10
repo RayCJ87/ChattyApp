@@ -44,6 +44,24 @@ body {
   padding: 5px;
 }
 
+
+.notification-content{
+
+  font-weight: bol1;
+  animation: ani1 1s infinite;
+}
+
+@keyframes ani1{
+  0% {color: red;}
+  15% {color: darkyellow;}
+  30% {color: seagreen;}
+  45% {color: slateblue;}
+  60% {color: brown;}
+  75% {color: Turquoise;}
+  90% {color: orange;}
+
+
+}
 .message.system {
   font-style: italic;
   padding: 5px 20px;
@@ -74,6 +92,13 @@ body {
   position: fixed;
   right: 0;
   top: 0;
+}
+
+.usersOnline {
+  padding-top: 20px;
+  float: right;
+  font-size: 18px;
+  color: darkslateblue;
 }
 
 .navbar-brand {
