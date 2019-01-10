@@ -34,7 +34,6 @@ export default class ChatBar extends Component {
       })
       evt.target.value = '';
     }
-
   }
 
   render() {

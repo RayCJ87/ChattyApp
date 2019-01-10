@@ -7,7 +7,7 @@ class App extends Component {
     super(props);
     this.state = {
       loading: true,
-      currentUser: { name: 'Danny'},
+      currentUser: {name: ''},
       messages : []
     };
 
@@ -61,20 +61,21 @@ class App extends Component {
 
   }
 
-  // getNewMessage(name, content){
-  //   console.log("ready to get msg")
-  //     const newMsg = this.state.messages.concat({username: name, content: content});
-  //     this.setState({messages: newMsg});
-  // }
 
   updateCurrentUser(name){
     const oldUser = this.state.currentUser.name;
     const that = this;
 
       let promise1 = new Promise (function(resolve, reject) {
-         if (oldUser != name){
+        let userChangeNotification = {};
+         if (oldUser != name ){
           that.setState({currentUser: {name: name}});
-          const userChangeNotification = {type: "postNotification", content: `${oldUser} has changed their name tp ${name}`};
+          if (oldUser == ''){
+            userChangeNotification = {type: "postNotification", content: `New user:  ***${name}***`};
+          }
+          else {
+            userChangeNotification = {type: "postNotification", content: `***${oldUser}*** has changed the name to ***${name}***`};
+          }
           that.socket.send(JSON.stringify(userChangeNotification));
           console.log(userChangeNotification);
           resolve();
