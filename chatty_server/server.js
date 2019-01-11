@@ -4,6 +4,8 @@ const SocketServer = WebSocket.Server;
 const express = require('express');
 const http = require('http');
 const uuid = require('uuid/v4');
+const fetch = require('node-fetch');
+const querystring = require('querystring');
 
 // Set the port to 3001
 const PORT = 3001;
@@ -50,13 +52,29 @@ colorGenerator = () => {
   return color;
 }
 
+handleMessage = (msg) => {
+  let matches = msg.match(/(http(s?):)([/|.|\w|\s|-])*\/giphy.(?:jpg|gif|png)/);
+  if (matches) {
+    const newMsg = msg.replace(matches[0], '');
+    const qs = querystring.stringify({
+      api_key: "nD0C2J4V7IQlcurU11m1rRzwWGcw79FY",
+      tag: matches[1]
+    })
+    fetch('https://api.giphy.com/v1/gifs/random?${qs}')
+        msg = `<div><div>${newMsg}</div>
+                               <img src="${matches[0]}" />
+                            </div>`
+  }
+  return msg;;
+}
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', ws => {
   console.log('Client connected');
   let objectToBroadcast = {};
-
+  const userKey = uuid();
   onlineUser++;
   objectToBroadcast['users'] = onlineUser;
   wss.broadcastJSON(objectToBroadcast);
@@ -74,10 +92,11 @@ wss.on('connection', ws => {
               objectToBroadcast = {
                 id: uuid(),
                 name: objData.username,
-                content: objData.content,
+                content: handleMessage(objData.content),
                 type: 'incomingMessage',
                 users: onlineUser,
-                nameColor: userColorDB[objData.username]
+                nameColor: userColorDB[objData.username],
+                // userKey: userKey
               };
           }
 
@@ -85,7 +104,7 @@ wss.on('connection', ws => {
               objectToBroadcast = {
                 id: uuid(),
                 name: objData.username,
-                content: objData.content,
+                content: handleMessage(objData.content),
                 type: 'incomingMessage',
                 users: onlineUser,
                 nameColor: colorGenerator()
@@ -98,7 +117,7 @@ wss.on('connection', ws => {
            objectToBroadcast = {
               id: uuid(),
               name: objData.username,
-              content: objData.content,
+              content: handleMessage(objData.content),
               type: 'incomingMessage',
               users: onlineUser,
               nameColor: objData.nameColor
@@ -112,7 +131,7 @@ wss.on('connection', ws => {
         case 'postNotification':
           if (!userlist.includes(objData.username)){
               objectToBroadcast = {
-                content: objData.content,
+                content: handleMessage(objData.content),
                 type: 'incomingNotification',
                 users: onlineUser
               };
