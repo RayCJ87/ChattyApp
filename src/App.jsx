@@ -17,34 +17,24 @@ class App extends Component {
   }
 
   componentDidMount(){
-
     this.socket = new WebSocket ("ws://localhost:3001");
-
     this.socket.onopen = () => {
       console.log("Connected to server!");
     };
-
     this.socket.onmessage = payload => {
-      console.log('Got a message from server', payload);
       const json = JSON.parse(payload.data);
-
-      console.log("THe user online now --->", json.users);
       this.setState({userNumber: json.users});
-
-      console.log("The name color is:", json.nameColor);
       switch (json.type) {
         case 'incomingMessage':
           this.setState({
             messages: [ ...this.state.messages, json],
             currentColor: {nameColor: json.nameColor}
           });
-          console.log("The messages fof display:", this.state.messages);
           break;
         case 'incomingNotification':
           this.setState({
             messages: [ ...this.state.messages, json]
           })
-          console.log("The messages of user change:", this.state.messages);
           break;
         case 'initial-messages':
           this.setState({
@@ -88,7 +78,6 @@ class App extends Component {
             userChangeNotification = {type: "postNotification", content: `***${oldUser}*** has changed the name to ***${name}***`};
           }
           that.socket.send(JSON.stringify(userChangeNotification));
-          console.log(userChangeNotification);
           resolve();
              };
           resolve();

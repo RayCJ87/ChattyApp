@@ -13,11 +13,9 @@ export default class ChatBar extends Component {
     evt.preventDefault();
     if (evt.target.name === "theName"){
       newUser = evt.target.value;
-      console.log("The user is: ", newUser);
     }
     if (evt.target.name === "newContent"){
       newContent = evt.target.value;
-      console.log("The msg is: ", newContent);
     }
   }
 
