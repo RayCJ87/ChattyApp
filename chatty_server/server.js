@@ -18,7 +18,6 @@ const app = express();
   // .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
 });
 
 const server = http.createServer(app);
@@ -30,9 +29,9 @@ const messageDatabase = [];
 let onlineUser = 0;
 let userColorDB = [];
 
-
 wss.broadcastJSON = obj => wss.broadcast(JSON.stringify(obj));
 
+//broadcast message to all users
 wss.broadcast = data => {
   wss.clients.forEach(ws => {
     if (ws.readyState === WebSocket.OPEN) {
@@ -41,6 +40,7 @@ wss.broadcast = data => {
   });
 };
 
+//generate a random color
 colorGenerator = () => {
   var letters = '0123456789ABCDEF';
   var color = '#';
@@ -50,6 +50,7 @@ colorGenerator = () => {
   return color;
 }
 
+//check if an incoming message contains a gif / jpg / png
 handleMessage = (msg) => {
   let matches = msg.match(/(http(s?):)([/|.|\w|\s|-])*\/giphy.(?:jpg|gif|png)/);
   if (matches) {
@@ -59,9 +60,10 @@ handleMessage = (msg) => {
       tag: matches[1]
     })
     fetch('https://api.giphy.com/v1/gifs/random?${qs}')
-        msg = `<div><div>${newMsg}</div>
-                               <img src="${matches[0]}" />
-                            </div>`
+        msg = `<div>
+                  <div>${newMsg}</div>
+                  <img src="${matches[0]}" />
+               </div>`
   }
   return msg;;
 }
@@ -70,16 +72,15 @@ handleMessage = (msg) => {
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', ws => {
-  console.log('Client connected');
   let objectToBroadcast = {};
   const userKey = uuid();
   onlineUser++;
   objectToBroadcast['users'] = onlineUser;
   wss.broadcastJSON(objectToBroadcast);
-
   ws.on('message', data => {
     const objData = JSON.parse(data);
 
+      // send proper message type to the front end
       switch (objData.type) {
         case 'postMessage':
           if(userColorDB.hasOwnProperty(objData.username) || userColorDB[userKey]){
@@ -108,7 +109,6 @@ wss.on('connection', ws => {
           messageDatabase.push(objectToBroadcast);
           wss.broadcastJSON(objectToBroadcast);
           break;
-
         case 'postNotification':
               objectToBroadcast = {
                 content: handleMessage(objData.content),
@@ -122,6 +122,7 @@ wss.on('connection', ws => {
       }
   });
 
+  //set up initial message
   const initialMessage = {
     type: 'initial-messages',
     messages: messageDatabase,
@@ -131,7 +132,6 @@ wss.on('connection', ws => {
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {
-    console.log('Client disconnected')
     onlineUser--;
     objectToBroadcast['users'] = onlineUser;
     wss.broadcastJSON(objectToBroadcast);

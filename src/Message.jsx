@@ -1,10 +1,8 @@
 import React, {Component}  from 'react';
 
-let nameStyle;
-
 export default class Messages extends Component {
   render() {
-
+    // return the user change message to frond end.
     if (this.props.msg.type === "incomingNotification"){
       return (
         <div className="message">

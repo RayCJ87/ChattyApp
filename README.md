@@ -1,7 +1,15 @@
 React Boilerplate
 =====================
 
-A minimal and light dev environment for ReactJS.
+The Chatty app is an user friendly, easy to use online chatroom made with React.
+
+## Final Product
+
+!["Screenshot of beginning]()
+!["Screenshot of user messages]()
+!["Screenshot of users post GIF, users change names, new users]()
+
+
 
 ### Usage
 
@@ -23,11 +31,12 @@ npm start
 open http://localhost:3000
 ```
 
-### Static Files
+### Getting Started
 
-You can store static files like images, fonts, etc in the `build` folder.
-
-For example, if you copy a file called my_image.png into the build folder you can access it using `http://localhost:3000/build/my_image.png`.
+1. Install dependencies: `npm i`
+2. run `npm start` under root directory
+3. run `npm start` under chatty-server directory
+4. Visit `http://localhost:3000/`
 
 ### Linting
 
@@ -38,8 +47,20 @@ npm run lint
 ```
 
 ### Dependencies
-
+* sass-loader
+* css-loader
+* babel-preset-react
+* babel-preset-es2015
+* babel-core
+* ws
+* espress
+* Node
+* uuid
 * React
+* node-sass
 * Webpack
+* react-dom
+* style-loadder
+* sockjs-client
 * [babel-loader](https://github.com/babel/babel-loader)
 * [webpack-dev-server](https://github.com/webpack/webpack-dev-server)

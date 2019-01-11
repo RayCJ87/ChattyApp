@@ -16,6 +16,7 @@ class App extends Component {
     this.updateCurrentUser= this.updateCurrentUser.bind(this);
   }
 
+  // receive messages from server after the compoments mount
   componentDidMount(){
     this.socket = new WebSocket ("ws://localhost:3001");
     this.socket.onopen = () => {
@@ -46,52 +47,50 @@ class App extends Component {
       }
     }
 
-
     this.socket.onclose = () => {
       console.log('Disconnected from the WebSocket');
     };
-
-    console.log("componentDidMount <App />");
-
   }
 
+  // update user status after a user changes the name.
   updateCurrentUser(name){
     const oldUser = this.state.currentUser.name;
     const theColor = this.state.currentColor.nameColor;
     const that = this;
 
-      let promise1 = new Promise (function(resolve, reject) {
-        let userChangeNotification = {};
-         if (oldUser != name ){
-          that.setState({currentUser: {name: name},
-                          currentColor: {}});
-          if (oldUser == ''){
-            userChangeNotification = {type: "postNotification", content: `New user:  ***${name}***`};
-          }
-          else {
-            userChangeNotification = {type: "postNotification", content: `***${oldUser}*** has changed the name to ***${name}***`};
-          }
-          that.socket.send(JSON.stringify(userChangeNotification));
-          resolve();
-             };
-          resolve();
-      });
-      return promise1;
+    let promise1 = new Promise (function(resolve, reject) {
+      let userChangeNotification = {};
+      if (oldUser != name ){
+        that.setState({currentUser: {name: name}, currentColor: {}});
+        if (oldUser == ''){
+          userChangeNotification = {type: "postNotification", content: `New user:  ***${name}***`};
+        }
+        else {
+          userChangeNotification = {type: "postNotification", content: `***${oldUser}*** has changed the name to ***${name}***`};
+        }
+        that.socket.send(JSON.stringify(userChangeNotification));
+        resolve();
+      };
+      resolve();
+    });
+    return promise1;
   }
 
+  //send data to the server
   _sendMessageToServer(name, content, color, key) {
     console.log("ready to send msg to server.")
     const newMsgToSend = {type:'postMessage', username: name, content: content, nameColor: color, userKey: key };
     this.socket.send(JSON.stringify(newMsgToSend));
   }
 
+  //send data to child components and construct the webpage
   render() {
     return (
       <div className = 'theContainer'>
-      <main className="messages">
-        <div className="message system">
-        </div>
-      </main>
+        <main className="messages">
+          <div className="message system">
+          </div>
+        </main>
           <nav className="navbar">
                 <a href="/" className="navbar-brand">Chatty</a>
                 <span className="usersOnline">{this.state.userNumber} users online now</span>
@@ -101,9 +100,9 @@ class App extends Component {
             <div className="message system">
             </div>
           </main>
-      <footer className="chatbar">
-          <ChatBar _sendMessageToServer={this._sendMessageToServer} updateCurrentUser={this.updateCurrentUser} nameColor= {this.state.currentColor.nameColor} userKey={this.state.userKey}/>
-      </footer>
+        <footer className="chatbar">
+            <ChatBar _sendMessageToServer={this._sendMessageToServer} updateCurrentUser={this.updateCurrentUser} nameColor= {this.state.currentColor.nameColor} userKey={this.state.userKey}/>
+        </footer>
       </div>
     );
   }

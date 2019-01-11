@@ -26,15 +26,14 @@ export default class ChatBar extends Component {
         newUser = 'Anonymous'
       }
       this.props.updateCurrentUser(newUser)
-      .then(res=> {
+        .then(res=> {
           this.props._sendMessageToServer(newUser, newContent, this.props.nameColor, this.props.userKey)
-      })
+        })
       evt.target.value = '';
     }
   }
 
   render() {
-    // const theUser = this.props.theUser.name;
     return (
         <footer className="chatbar">
           <input className="chatbar-username" placeholder="Your Name (Optional)" name="theName" onChange = {this.checkMsg} />
