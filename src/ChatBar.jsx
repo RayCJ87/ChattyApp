@@ -21,14 +21,13 @@ export default class ChatBar extends Component {
 
   handleEnter (evt) {
     evt.preventDefault();
-    console.log("The userrr is: ", newUser);
     if (evt.key === "Enter" && newContent != ''){
       if (newUser === ''){
         newUser = 'Anonymous'
       }
       this.props.updateCurrentUser(newUser)
       .then(res=> {
-          this.props._sendMessageToServer(newUser, newContent, this.props.nameColor)
+          this.props._sendMessageToServer(newUser, newContent, this.props.nameColor, this.props.userKey)
       })
       evt.target.value = '';
     }

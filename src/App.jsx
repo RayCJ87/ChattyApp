@@ -9,7 +9,7 @@ class App extends Component {
       loading: true,
       currentUser: {name: ''},
       messages : [],
-      currentColor: {}
+      currentColor: {},
     };
 
     this._sendMessageToServer = this._sendMessageToServer.bind(this);
@@ -28,7 +28,8 @@ class App extends Component {
         case 'incomingMessage':
           this.setState({
             messages: [ ...this.state.messages, json],
-            currentColor: {nameColor: json.nameColor}
+            currentColor: {nameColor: json.nameColor},
+            userKey: json.userKey
           });
           break;
         case 'incomingNotification':
@@ -41,14 +42,8 @@ class App extends Component {
             messages: json.messages
           });
           break;
-        case 'repeatedName':
-          alert('This name is taken, please choose another one');
-          break;
         default:
       }
-
-      console.log("The messages now", this.state.messages);
-      console.log("The currentUser is:  ", this.state.currentUser);
     }
 
 
@@ -59,7 +54,6 @@ class App extends Component {
     console.log("componentDidMount <App />");
 
   }
-
 
   updateCurrentUser(name){
     const oldUser = this.state.currentUser.name;
@@ -85,11 +79,9 @@ class App extends Component {
       return promise1;
   }
 
-  _sendMessageToServer(name, content, color) {
+  _sendMessageToServer(name, content, color, key) {
     console.log("ready to send msg to server.")
-    const newMsgToSend = {type:'postMessage', username: name, content: content, nameColor: color };
-    console.log("New msg here", newMsgToSend.username);
-    console.log("the obj to send: ", newMsgToSend);
+    const newMsgToSend = {type:'postMessage', username: name, content: content, nameColor: color, userKey: key };
     this.socket.send(JSON.stringify(newMsgToSend));
   }
 
@@ -110,7 +102,7 @@ class App extends Component {
             </div>
           </main>
       <footer className="chatbar">
-          <ChatBar _sendMessageToServer={this._sendMessageToServer} updateCurrentUser={this.updateCurrentUser} nameColor= {this.state.currentColor.nameColor}/>
+          <ChatBar _sendMessageToServer={this._sendMessageToServer} updateCurrentUser={this.updateCurrentUser} nameColor= {this.state.currentColor.nameColor} userKey={this.state.userKey}/>
       </footer>
       </div>
     );

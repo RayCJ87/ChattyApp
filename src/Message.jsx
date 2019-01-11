@@ -3,9 +3,7 @@ import React, {Component}  from 'react';
 let nameStyle;
 
 export default class Messages extends Component {
-
   render() {
-    console.log("The style at the end....", this.props.nColor);
 
     if (this.props.msg.type === "incomingNotification"){
       return (

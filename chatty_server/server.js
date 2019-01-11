@@ -28,9 +28,7 @@ const wss = new SocketServer({ server });
 
 const messageDatabase = [];
 let onlineUser = 0;
-let userlist = [];
 let userColorDB = [];
-onlineUser['userNow'] = 0;
 
 
 wss.broadcastJSON = obj => wss.broadcast(JSON.stringify(obj));
@@ -79,75 +77,49 @@ wss.on('connection', ws => {
   objectToBroadcast['users'] = onlineUser;
   wss.broadcastJSON(objectToBroadcast);
 
-
   ws.on('message', data => {
-    console.log(`Got message from the client ${data}`);
     const objData = JSON.parse(data);
-     console.log("The name here: ", objData.username)
-     console.log("The COLOR here: ", objData.nameColor)
 
       switch (objData.type) {
         case 'postMessage':
-          if(userColorDB.hasOwnProperty(objData.username)){
+          if(userColorDB.hasOwnProperty(objData.username) || userColorDB[userKey]){
               objectToBroadcast = {
                 id: uuid(),
                 name: objData.username,
                 content: handleMessage(objData.content),
                 type: 'incomingMessage',
                 users: onlineUser,
-                nameColor: userColorDB[objData.username],
-                // userKey: userKey
+                nameColor: userColorDB[userKey],
+                userKey: objData.userKey
               };
           }
-
-          else if (objData.nameColor == undefined){
+          else {
               objectToBroadcast = {
                 id: uuid(),
                 name: objData.username,
                 content: handleMessage(objData.content),
                 type: 'incomingMessage',
                 users: onlineUser,
-                nameColor: colorGenerator()
+                nameColor: colorGenerator(),
+                userKey: userKey
               };
-            userlist.push(objData.username);
-            userColorDB[objData.username] = objectToBroadcast.nameColor;
           }
-
-          else{
-           objectToBroadcast = {
-              id: uuid(),
-              name: objData.username,
-              content: handleMessage(objData.content),
-              type: 'incomingMessage',
-              users: onlineUser,
-              nameColor: objData.nameColor
-            };
-          }
+          userColorDB[userKey] = objectToBroadcast.nameColor;
           messageDatabase.push(objectToBroadcast);
           wss.broadcastJSON(objectToBroadcast);
           break;
 
-
         case 'postNotification':
-          if (!userlist.includes(objData.username)){
               objectToBroadcast = {
                 content: handleMessage(objData.content),
                 type: 'incomingNotification',
                 users: onlineUser
               };
-          }
-          else{
-           objectToBroadcast = {type: 'repeatedName'}
-
-          }
           messageDatabase.push(objectToBroadcast);
           wss.broadcastJSON(objectToBroadcast);
           break;
         default:
       }
-    console.log("The user list now:", userlist);
-    console.log("the users now", onlineUser);
-
   });
 
   const initialMessage = {
