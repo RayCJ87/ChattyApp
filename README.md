@@ -5,10 +5,9 @@ The Chatty app is an user friendly, easy to use online chatroom made with React.
 
 ## Final Product
 
-!["Screenshot of beginning]()
-!["Screenshot of user messages]()
-!["Screenshot of users post GIF, users change names, new users]()
-
+!["Screenshot of beginning](https://github.com/RayCJ87/ChattyApp/blob/master/screenshots/1.png)
+!["Screenshot of user messages](https://github.com/RayCJ87/ChattyApp/blob/master/screenshots/2.png)
+!["Screenshot of users post GIF, users change names, new users](https://github.com/RayCJ87/ChattyApp/blob/master/screenshots/3.png)
 
 
 ### Usage
@@ -16,8 +15,8 @@ The Chatty app is an user friendly, easy to use online chatroom made with React.
 Clone the boilerplate and create your own git repo.
 
 ```
-git clone git@github.com:lighthouse-labs/react-simple-boilerplate.git
-cd react-simple-boilerplate
+git clone git@github.com:RayCJ87/ChattyApp.git
+cd ChattyApp
 git remote rm origin
 git remote add origin [YOUR NEW REPOSITORY]
 # Manually update your package.json file
